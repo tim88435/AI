@@ -12,6 +12,8 @@ public class AIManager : BaseManager
         Dead
     }
     public State currentState;
+    protected PlayerManager playerManager;
+    [SerializeField] protected Animator _anim;
 
     protected override void Start()
     {
@@ -89,7 +91,25 @@ public class AIManager : BaseManager
 
     public override void TakeTurn()
     {
-        StartCoroutine(Wait());
+        StartCoroutine(WaitStart());
+        /*switch (currentState)
+        {
+            case State.HighHP:
+                HighHPState();
+                break;
+            case State.LowHP:
+                LowHPState();
+                break;
+            case State.Dead:
+                DeadState();
+                break;
+            default:
+                break;
+        }*/
+    }
+    private IEnumerator WaitStart()
+    {
+        yield return new WaitForSecondsRealtime(2);
         switch (currentState)
         {
             case State.HighHP:
@@ -105,33 +125,38 @@ public class AIManager : BaseManager
                 break;
         }
     }
-    private IEnumerator Wait()
+
+    private IEnumerator WaitEnd()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSecondsRealtime(2);
+        _playerManager.TakeTurn();
     }
+
 
     protected override void EndTurn()
     {
-
-        _playerManager.TakeTurn();
+        StartCoroutine(WaitEnd());
     }
 
     public void Splash()
     {
         Debug.Log("AI uses splash!");
         _playerManager.DealDamage(30);
+        _anim.SetTrigger("Splash");
         EndTurn();
     }
     public void IronTail()
     {
         Debug.Log("AI uses iron tail!");
         _playerManager.DealDamage(10.1f);
+        _anim.SetTrigger("Iron Tail");
         EndTurn();
     }
     public void Rest()
     {
         Debug.Log("AI rested!");
         Heal(30);
+        _anim.SetTrigger("Rest");
         EndTurn();
     }
     public void SelfDestruct()
@@ -139,6 +164,7 @@ public class AIManager : BaseManager
         Debug.Log("AI self destructed!");
         DealDamage(_maxHealth);
         _playerManager.DealDamage(80);
+        _anim.SetTrigger("Self Destruct");
         EndTurn();
     }
 
