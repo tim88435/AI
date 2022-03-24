@@ -99,7 +99,7 @@ public class bananaScript : MonoBehaviour
     public void NewWaypoint()
     {
         float x = Random.Range(-9, 9);
-        float y = Random.Range(-5, 5);
+        float y = Random.Range(0, 4.5f);
         GameObject newPoint = Instantiate(wayPointPrefab, new Vector2(x,y), Quaternion.identity);
         waypoints.Add(newPoint);
         WaypointUpdate();
