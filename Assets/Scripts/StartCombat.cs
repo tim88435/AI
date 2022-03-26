@@ -5,18 +5,24 @@ using UnityEngine;
 public class StartCombat : MonoBehaviour
 {
     [SerializeField] GameObject _combatCanvas;
-    private void OnCollisionEnter2D(Collision2D collision)
+    public AIManager _aiManager;
+    public PlayerManager _playerManager;
+    private void OnCollisionEnter2D(Collision2D collision)//when collides with something
     {
 
-        bananaScript aiMove = collision.gameObject.GetComponent<bananaScript>();
+        bananaScript aiMove = collision.gameObject.GetComponent<bananaScript>();//makes aiMove equal to the collided object's bananaScript
 
-        if (aiMove == null)
+        if (aiMove == null)//checks if bananaScript exists
         {
-            return;
+            return;//exit OnCollisionEnter2D
         }
-        Debug.Log("AI Collision");
+        //Debug.Log("AI Collision");
 
-        _combatCanvas.SetActive(true);
-        Time.timeScale = 0;
+        _combatCanvas.SetActive(true);//turns on canvas
+        Time.timeScale = 0;//stops time
+        _aiManager.Heal(100);//heals AI
+        _playerManager.Heal(100);//heals player
+        _playerManager.TakeTurn();//starts player's turn
+        _aiManager.currentState = AIManager.State.HighHP;//sets AI state to HighHP
     }
 }

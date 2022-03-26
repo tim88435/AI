@@ -11,14 +11,14 @@ public abstract class BaseManager : MonoBehaviour
 
     protected virtual void Start()
     {
-        updateHealthText();
 
+        updateHealthText();//update health before the first attack
     }
 
     public abstract void TakeTurn();
     protected abstract void EndTurn();
 
-    public void updateHealthText()
+    public void updateHealthText()//update health text
     {
         if (_healthtext !=null)
         {
@@ -26,7 +26,7 @@ public abstract class BaseManager : MonoBehaviour
         }
     }
 
-    public void DealDamage(float damage)
+    public void DealDamage(float damage) //deal damage, not set to a specific action
     {
         _health = Mathf.Max(_health-damage,0);
         if (_health <= 0)
@@ -37,7 +37,7 @@ public abstract class BaseManager : MonoBehaviour
         updateHealthText();
     }
 
-    public void Heal(float heal)
+    public void Heal(float heal)//deal health, not set to a specific action
     {
         _health = Mathf.Min(_health+heal, _maxHealth);
         updateHealthText();

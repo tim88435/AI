@@ -41,8 +41,10 @@ public class bananaScript : MonoBehaviour
     [Tooltip("List of current waypoints")]
     public List<GameObject> waypoints;
 
+    [SerializeField] private BoxCollider2D _Enemy;
+    [SerializeField] private GameObject canvasGame;
 
-    // Update is called once per frame
+    #region Old code
 
     //void Update()
     //{
@@ -73,8 +75,9 @@ public class bananaScript : MonoBehaviour
     //    }
     //    //Vector3.MoveTowards(transform.position, position0.transform.position, Time.deltaTime * Speed);
     //}
+    #endregion
 
-    private void Start()
+    private void Start()//add a bunch of bananas
     {
         while (waypoints.Count < startingBanana)
         {
@@ -83,12 +86,12 @@ public class bananaScript : MonoBehaviour
     }
 
 
-    public void RemoveCurrentWaypoint()
+    public void RemoveCurrentWaypoint()//add a specific banana
     {
         GameObject current = waypoints[waypointIndex];
         waypoints.Remove(current);
         Destroy(current);
-        if (waypointIndex == waypoints.Count & waypointIndex !=0)
+        if (waypointIndex == waypoints.Count & waypointIndex !=0)//make sure waypointIndex is in the waypoints range
         {
             waypointIndex = 0;
         }
@@ -96,7 +99,7 @@ public class bananaScript : MonoBehaviour
 
 
 
-    public void NewWaypoint()
+    public void NewWaypoint()//add a banana
     {
         float x = Random.Range(-9, 9);
         float y = Random.Range(0, 4.5f);
@@ -105,16 +108,31 @@ public class bananaScript : MonoBehaviour
         WaypointUpdate();
     }
 
+    public void EndCombat()//reference for AI manager, shoudn't exist
+    {
+        StartCoroutine(AIDead());
+    }
 
+    public IEnumerator AIDead()//change back to main game
+    {
+        _Enemy.enabled = false;//turn off collision for enemy
+        yield return new WaitForSecondsRealtime(3);//wait 3 seconds
+
+
+        Time.timeScale = 1;//set time to normal
+        canvasGame.SetActive(false);//turn off canvas
+        yield return new WaitForSecondsRealtime(2);//wait 2 seconds
+        _Enemy.enabled = true;//turn on collision for enemy
+    }
 
 
     public void WaypointUpdate()
     {
         Vector2 AIPosition = transform.position;
-        if (Vector2.Distance(AIPosition, waypoints[waypointIndex].transform.position) < minGoalDistance)
+        if (Vector2.Distance(AIPosition, waypoints[waypointIndex].transform.position) < minGoalDistance)//checks if ai is close enough to waypoint
         {
             RemoveCurrentWaypoint();
-            if (waypointIndex >= waypoints.Count)
+            if (waypointIndex >= waypoints.Count)//make sure waypointIndex is in the waypoints range
             {
                 waypointIndex = 0;
             }
@@ -123,19 +141,19 @@ public class bananaScript : MonoBehaviour
     }
     public void AIMovementTowards(Transform goal)
     {
-        if (Vector2.Distance(transform.position, goal.position) > minGoalDistance)
+        if (Vector2.Distance(transform.position, goal.position) > minGoalDistance)//checks if ai is far enough to target
         {
-            Vector2 directionToPos0 = goal.position-transform.position;
-                    directionToPos0.Normalize();
-                    transform.position += (Vector3)directionToPos0*Time.deltaTime*Speed;
+            Vector2 directionToPos0 = goal.position-transform.position;//sets move direction to ai
+                    directionToPos0.Normalize();//normalizes move direction for ai
+                    transform.position += (Vector3)directionToPos0*Time.deltaTime*Speed;//ai moves in target
         }
     }
 
     public void AIMovementAway(Transform goal)
     {
-    Vector2 directionToPos0 = goal.position - transform.position;
-    directionToPos0.Normalize();
-    transform.position -= (Vector3)directionToPos0 * Time.deltaTime * Speed;
+    Vector2 directionToPos0 = goal.position - transform.position;//sets move direction from ai
+    directionToPos0.Normalize();//normalizes move direction for ai
+        transform.position -= (Vector3)directionToPos0 * Time.deltaTime * Speed;//ai moves from target
     }
 
 }
