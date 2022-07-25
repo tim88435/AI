@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections; //IEnumerator, arrays
+using System.Collections.Generic; //lists
 using UnityEngine;
 
 public class bananaScript : MonoBehaviour
 {
-
-
     [Header("Enemy Attributes")]
     [Tooltip("Speed of enemy")]
     public float Speed = 1f;
